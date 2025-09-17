@@ -11,11 +11,10 @@ fn main() {
         };
 
         let mut output = String::new();
-        let mut input = line.trim();
-        let mut token;
+        let input = line.as_str();
 
-        while !input.is_empty() {
-            (token, input) = lexer::next_token(input);
+        for token in lexer::tokens(input) {
+            dbg!(token);
             write!(&mut output, "{}", token).unwrap();
         }
 
