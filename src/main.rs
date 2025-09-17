@@ -1,23 +1,15 @@
-use std::fmt::Write;
+use std::io;
 
-mod word;
+mod show;
 mod lexer;
+mod word;
 
 fn main() {
-    let stdin = std::io::stdin();
+    let stdin = io::stdin();
     for line in stdin.lines() {
-        let Ok(line) = line else {
-            break
-        };
-
-        let mut output = String::new();
+        let Ok(line) = line else { break };
         let input = line.as_str();
-
-        for token in lexer::tokens(input) {
-            dbg!(token);
-            write!(&mut output, "{}", token).unwrap();
-        }
-
-        println!("{}", output);
+        show::write_tokens(&mut io::stdout(), lexer::tokens(input)).unwrap();
+        println!(); // newline + flush
     }
 }

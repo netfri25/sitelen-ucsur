@@ -31,7 +31,7 @@ fn generate(out: &mut impl Write) -> io::Result<()> {
     // writeln!(out, "    const UNICODE_OFFSET: u32 = {UNICODE_OFFSET};")?;
     write!(out, "    const UNICODE_STR: [&str; {WORDS_COUNT}] = [")?;
     for i in 0..WORDS.len() as u32 {
-        writeln!(out, "\"{}\",", char::from_u32(UNICODE_OFFSET + i).unwrap())?;
+        write!(out, "\"{}\",", char::from_u32(UNICODE_OFFSET + i).unwrap())?;
     }
     writeln!(out, "];")?;
 

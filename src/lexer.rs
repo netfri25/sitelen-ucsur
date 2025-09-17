@@ -3,16 +3,20 @@ use std::str::FromStr as _;
 
 use crate::word::Word;
 
-const ALPHABET_LETTERS: usize = 14;
-const ALPHABET: [char; ALPHABET_LETTERS] = [
-    'a', 'e', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 's', 't', 'u', 'w',
-];
+const ALPHABET: &str = "aeijklmnopstuw";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Token<'a> {
     Word(Word),
     Space(&'a str), // consecutive spaces
     Other(&'a str),
+}
+
+impl Token<'_> {
+    #[must_use]
+    pub fn is_word(&self) -> bool {
+        matches!(self, Self::Word(..))
+    }
 }
 
 impl<'a> fmt::Display for Token<'a> {
@@ -42,7 +46,7 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
     }
 
     // parse word
-    let leftover = input.trim_start_matches(|c| ALPHABET.contains(&c));
+    let leftover = input.trim_start_matches(|c| ALPHABET.contains(c));
     let count = input.len() - leftover.len();
     if count > 0 {
         let text = &input[..count];
@@ -65,7 +69,7 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
 
 
 fn valid_char_token(c: char) -> bool {
-    ALPHABET.contains(&c) || c == ' '
+    ALPHABET.contains(c) || c == ' '
 }
 
 pub fn tokens(mut input: &'_ str) -> impl Iterator<Item = Token<'_>> {
