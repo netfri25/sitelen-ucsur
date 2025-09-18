@@ -10,8 +10,9 @@ fn main() {
     for line in stdin.lines() {
         let Ok(line) = line else { break };
         let input = line.as_str();
-        let mut output =  String::new();
-        show::write_tokens(&mut output, lexer::tokens(input)).unwrap();
-        println!("{}", output);
+        for token in lexer::tokens(input) {
+            print!("{}", token);
+        }
+        println!()
     }
 }

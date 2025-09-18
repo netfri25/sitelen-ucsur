@@ -3,9 +3,10 @@
 pub enum Modifier {
     StartOfCartouche = 0x0,
     EndOfCartouche = 0x1,
-    CombiningCartoucheExtension = 0x2,
-    StartOfLongPi = 0x3,
-    CombiningLongPiExtension = 0x4,
+    // these aren't used
+    // CombiningCartoucheExtension = 0x2,
+    // StartOfLongPi = 0x3,
+    // CombiningLongPiExtension = 0x4,
     StackingJoiner = 0x5,
     ScalingJoiner = 0x6,
     StartOfLongGlyph = 0x7,
@@ -18,14 +19,6 @@ pub enum Modifier {
 }
 
 impl Modifier {
-    pub fn from_char(c: char) -> Option<Self> {
-        Some(match c {
-            '[' => Self::StartOfCartouche,
-            ']' => Self::EndOfCartouche,
-            _ => return None
-        })
-    }
-
     // returns the unicode representation of the modifier
     pub const fn as_unicode_str(self) -> &'static str {
         UNICODE_TABLE[self as usize]

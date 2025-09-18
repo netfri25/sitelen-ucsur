@@ -1,4 +1,3 @@
-use std::fmt;
 use std::str::FromStr as _;
 
 use crate::word::Word;
@@ -19,37 +18,29 @@ pub enum Token<'a> {
     LBrace,
     RBrace,
 
+    // +
+    Plus,
+
+    // -
+    Minus,
+
+    // _
+    Underscore,
+
+    // .
+    Dot,
+
+    // :
+    Colon,
+
+    // valid sitelen Lasina word
     Word(Word),
-    Space(&'a str), // consecutive spaces
+
+    // consecutive spaces
+    Space(usize),
+
+    // everything else
     Other(&'a str),
-}
-
-impl Token<'_> {
-    #[must_use]
-    pub fn is_other(&self) -> bool {
-        matches!(self, Self::Other(..))
-    }
-
-    #[must_use]
-    pub fn is_space(&self) -> bool {
-        matches!(self, Self::Space(..))
-    }
-}
-
-impl<'a> fmt::Display for Token<'a> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Token::LParen => f.write_str("("),
-            Token::RParen => f.write_str(")"),
-            Token::LBrack => f.write_str("["),
-            Token::RBrack => f.write_str("]"),
-            Token::LBrace => f.write_str("{"),
-            Token::RBrace => f.write_str("}"),
-            Token::Word(word) => f.write_str(word.as_unicode_str()),
-            Token::Other(s) => f.write_str(s),
-            Token::Space(s) => f.write_str(s),
-        }
-    }
 }
 
 // token is either a "sitelen Lasina" or something else
@@ -57,7 +48,7 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
     // handle empty input
     if input.is_empty() {
         // TODO?: maybe it's better to use something like `Token::End`
-        return (Token::Space(""), "");
+        return (Token::Space(0), "");
     }
 
     // parse single character modifier
@@ -72,6 +63,11 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
             ']' => Token::RBrack,
             '{' => Token::LBrace,
             '}' => Token::RBrace,
+            '+' => Token::Plus,
+            '-' => Token::Minus,
+            '_' => Token::Underscore,
+            '.' => Token::Dot,
+            ':' => Token::Colon,
             _ => break 'token None,
         })
     };
@@ -84,7 +80,7 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
     let leftover = input.trim_start_matches(' ');
     let count = input.len() - leftover.len();
     if count > 0 {
-        let token = Token::Space(&input[..count]);
+        let token = Token::Space(count);
         return (token, leftover);
     }
 
@@ -111,7 +107,7 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
 }
 
 fn valid_char_token(c: char) -> bool {
-    ALPHABET.contains(c) || " ()[]{}".contains(c)
+    ALPHABET.contains(c) || " ()[]{}+-_.:".contains(c)
 }
 
 pub fn tokens(mut input: &'_ str) -> impl Iterator<Item = Token<'_>> {
