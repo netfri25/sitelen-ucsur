@@ -2,7 +2,7 @@ use std::str::FromStr as _;
 
 use crate::word::Word;
 
-const ALPHABET: &str = "aeijklmnopstuw";
+const ALPHABET: &str = "aeijklmnopstuwAEIJKLMNOPSTUW";
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Token<'a> {
