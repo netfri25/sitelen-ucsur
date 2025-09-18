@@ -64,16 +64,16 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
     let mut iter = input.chars();
     let first = iter.next().unwrap_or_default();
     let leftover = iter.as_str();
-    let token = loop {
-        break Some(match first {
+    let token = 'token: {
+        Some(match first {
             '(' => Token::LParen,
             ')' => Token::RParen,
             '[' => Token::LBrack,
             ']' => Token::RBrack,
             '{' => Token::LBrace,
             '}' => Token::RBrace,
-            _ => break None,
-        });
+            _ => break 'token None,
+        })
     };
 
     if let Some(token) = token {
