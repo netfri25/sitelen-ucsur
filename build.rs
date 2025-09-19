@@ -28,18 +28,44 @@ fn generate(out: &mut impl Write) -> io::Result<()> {
 
     writeln!(out, "impl Word {{")?;
 
-    // writeln!(out, "    const UNICODE_OFFSET: u32 = {UNICODE_OFFSET};")?;
-    write!(out, "    const UNICODE_STR: [&str; {WORDS_COUNT}] = [")?;
+    write!(out, "    const SITELEN_CHAR: [char; {WORDS_COUNT}] = [")?;
     for i in 0..WORDS.len() as u32 {
-        write!(out, "\"{}\",", char::from_u32(UNICODE_OFFSET + i).unwrap())?;
+        write!(out, "'{}',", char::from_u32(UNICODE_OFFSET + i).unwrap())?;
     }
     writeln!(out, "];")?;
 
     writeln!(out)?;
 
-    writeln!(out, "    pub fn as_unicode_str(self) -> &'static str {{")?;
-    writeln!(out, "        Self::UNICODE_STR[self as usize]")?;
+    write!(out, "    const LASINA_WORD: [&str; {WORDS_COUNT}] = [")?;
+    for word in WORDS {
+        write!(out, "\"{word}\",")?;
+    }
+    writeln!(out, "];")?;
+
+    writeln!(out)?;
+
+    writeln!(out, "    pub fn as_sitelen(self) -> char {{")?;
+    writeln!(out, "        Self::SITELEN_CHAR[self as usize]")?;
     writeln!(out, "    }}")?;
+    writeln!(out)?;
+    writeln!(out, "    pub fn as_lasina(self) -> &'static str {{")?;
+    writeln!(out, "        Self::LASINA_WORD[self as usize]")?;
+    writeln!(out, "    }}")?;
+
+    writeln!(out)?;
+
+    writeln!(out, "    pub fn from_sitelen(c: char) -> Option<Self> {{")?;
+    writeln!(out, "        let value = c as u32;")?;
+    writeln!(out, "        ({UNICODE_OFFSET}..{UNICODE_OFFSET} + {WORDS_COUNT})")?;
+    writeln!(out, "            .contains(&value)")?;
+    writeln!(out, "            .then(|| {{")?;
+    writeln!(out, "                // SAFETY: we transmute to the enum after it has been verified to be in the")?;
+    writeln!(out, "                // range of the enum. same for the subtraction, since the check applies before")?;
+    writeln!(out, "                // evaluation the subtraction, and the same for the casting of the u8.")?;
+    writeln!(out, "                unsafe {{ std::mem::transmute(value.unchecked_sub({UNICODE_OFFSET}) as u8) }}")?;
+    writeln!(out, "            }})")?;
+    writeln!(out, "    }}")?;
+
     writeln!(out, "}}")?;
 
     writeln!(out)?;
