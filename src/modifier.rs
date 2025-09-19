@@ -20,24 +20,24 @@ pub enum Modifier {
 
 impl Modifier {
     // returns the unicode representation of the modifier
-    pub const fn as_unicode_str(self) -> &'static str {
+    pub const fn as_sitelen(self) -> char {
         UNICODE_TABLE[self as usize]
     }
 }
 
-const UNICODE_TABLE: [&str; 14] = [
-    "\u{f1990}",
-    "\u{f1991}",
-    "\u{f1992}",
-    "\u{f1993}",
-    "\u{f1994}",
-    "\u{f1995}",
-    "\u{f1996}",
-    "\u{f1997}",
-    "\u{f1998}",
-    "\u{f1999}",
-    "\u{f199a}",
-    "\u{f199b}",
-    "\u{f199c}",
-    "\u{f199d}",
+pub const UNICODE_TABLE: [char; 14] = [
+    '\u{f1990}',
+    '\u{f1991}',
+    '\u{f1992}',
+    '\u{f1993}',
+    '\u{f1994}',
+    '\u{f1995}',
+    '\u{f1996}',
+    '\u{f1997}',
+    '\u{f1998}',
+    '\u{f1999}',
+    '\u{f199a}',
+    '\u{f199b}',
+    '\u{f199c}',
+    '\u{f199d}',
 ];
