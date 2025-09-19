@@ -28,10 +28,15 @@ here's a script I use to convert the currently selected text to sitelen UCSUR:
 ```bash
 #!/bin/bash
 
+if [ "$#" -ne 1]; then
+    echo "Usage: $0 <from|to>"
+    exit 1
+fi
+
 # keep a copy of the clipboard
 prev=$(wl-paste -n)
 
-wl-paste -np | sitelen-ucsur | wl-copy -n
+wl-paste -np | sitelen-ucsur "$1" | wl-copy -n
 
 wtype -M ctrl -k v
 
