@@ -1,5 +1,6 @@
 use std::str::FromStr as _;
 
+use crate::show;
 use crate::word::Word;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -39,6 +40,35 @@ pub enum Token<'a> {
 
     // everything else
     Other(&'a str),
+}
+
+impl<'a> Token<'a> {
+    pub fn from_sitelen(c: char) -> Option<Self> {
+        show::TOKEN_MODIFIER
+            .iter()
+            .find(|(_, m)| m.as_sitelen() == c)
+            .map(|(t, _)| *t)
+            .or_else(|| Word::from_sitelen(c).map(Self::Word))
+    }
+
+    pub fn as_literal(&self) -> &'a str {
+        match self {
+            Token::LParen => "(",
+            Token::RParen => ")",
+            Token::LBrack => "[",
+            Token::RBrack => "]",
+            Token::LBrace => "{",
+            Token::RBrace => "}",
+            Token::Plus => "+",
+            Token::Minus => "-",
+            Token::Underscore => "_",
+            Token::Dot => ".",
+            Token::Colon => ":",
+            Token::Word(word) => word.as_lasina(),
+            Token::Space(spaces) => spaces,
+            Token::Other(other) => other,
+        }
+    }
 }
 
 // token is either a "sitelen Lasina" or something else
