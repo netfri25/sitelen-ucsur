@@ -34,6 +34,12 @@ pub enum Token<'a> {
     // :
     Colon,
 
+    // start of quotes
+    Te,
+
+    // end of quotes
+    To,
+
     // valid sitelen Lasina word
     Word(Word),
 
@@ -51,7 +57,7 @@ impl<'a> Token<'a> {
     pub fn from_sitelen(c: char) -> Option<Self> {
         show::TOKEN_MODIFIER
             .iter()
-            .find(|(_, m)| m.as_sitelen() == c)
+            .find(|(_, m)| *m == c)
             .map(|(t, _)| *t)
             .or_else(|| Word::from_sitelen(c).map(Self::Word))
     }
@@ -69,6 +75,8 @@ impl<'a> Token<'a> {
             Token::Underscore => "_",
             Token::Dot => ".",
             Token::Colon => ":",
+            Token::Te => "te",
+            Token::To => "to",
             Token::Word(word) => word.as_lasina(),
             Token::Space(spaces) => spaces,
             Token::Lasina(word) => word,
@@ -123,6 +131,14 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
     let count = input.len() - leftover.len();
     if count > 0 {
         let text = &input[..count];
+
+        if text == "te" {
+            return (Token::Te, leftover)
+        }
+
+        if text == "to" {
+            return (Token::To, leftover)
+        }
 
         let token = Word::from_str(text)
             .map(Token::Word)

@@ -16,13 +16,15 @@ impl<'a> fmt::Display for Token<'a> {
             | Token::Minus
             | Token::Underscore
             | Token::Dot
-            | Token::Colon => {
+            | Token::Colon
+            | Token::Te
+            | Token::To => {
                 let modifier = TOKEN_MODIFIER
                     .iter()
                     .find(|(t, _)| t == self)
                     .expect("modifier for token exists")
                     .1;
-                f.write_char(modifier.as_sitelen())
+                f.write_char(modifier)
             }
 
             Token::Word(word) => f.write_char(word.as_sitelen()),
@@ -59,16 +61,18 @@ impl<'a> fmt::Display for Token<'a> {
     }
 }
 
-pub const TOKEN_MODIFIER: [(Token, Modifier); 11] = [
-    (Token::LParen, Modifier::StartOfLongGlyph),
-    (Token::RParen, Modifier::EndOfLongGlyph),
-    (Token::LBrack, Modifier::StartOfCartouche),
-    (Token::RBrack, Modifier::EndOfCartouche),
-    (Token::LBrace, Modifier::StartOfReverseLongGlyph),
-    (Token::RBrace, Modifier::EndOfReverseLongGlyph),
-    (Token::Plus, Modifier::ScalingJoiner),
-    (Token::Minus, Modifier::StackingJoiner),
-    (Token::Underscore, Modifier::CombiningLongGlyphExtension),
-    (Token::Dot, Modifier::MiddleDot),
-    (Token::Colon, Modifier::Colon),
+pub const TOKEN_MODIFIER: [(Token, char); 13] = [
+    (Token::LParen, Modifier::StartOfLongGlyph.as_sitelen()),
+    (Token::RParen, Modifier::EndOfLongGlyph.as_sitelen()),
+    (Token::LBrack, Modifier::StartOfCartouche.as_sitelen()),
+    (Token::RBrack, Modifier::EndOfCartouche.as_sitelen()),
+    (Token::LBrace, Modifier::StartOfReverseLongGlyph.as_sitelen()),
+    (Token::RBrace, Modifier::EndOfReverseLongGlyph.as_sitelen()),
+    (Token::Plus, Modifier::ScalingJoiner.as_sitelen()),
+    (Token::Minus, Modifier::StackingJoiner.as_sitelen()),
+    (Token::Underscore, Modifier::CombiningLongGlyphExtension.as_sitelen()),
+    (Token::Dot, Modifier::MiddleDot.as_sitelen()),
+    (Token::Colon, Modifier::Colon.as_sitelen()),
+    (Token::Te, '「'),
+    (Token::To, '」'),
 ];
