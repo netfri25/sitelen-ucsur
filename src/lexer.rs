@@ -3,6 +3,8 @@ use std::str::FromStr as _;
 use crate::show;
 use crate::word::Word;
 
+const ALPHABET: &str = "aeijklmnopstuw";
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Token<'a> {
     // ()
@@ -35,6 +37,9 @@ pub enum Token<'a> {
     // valid sitelen Lasina word
     Word(Word),
 
+    // non sitelen Lasina word but uses all alphabetical letters
+    Lasina(&'a str),
+
     // consecutive spaces
     Space(&'a str),
 
@@ -66,6 +71,7 @@ impl<'a> Token<'a> {
             Token::Colon => ":",
             Token::Word(word) => word.as_lasina(),
             Token::Space(spaces) => spaces,
+            Token::Lasina(word) => word,
             Token::Other(other) => other,
         }
     }
@@ -120,7 +126,13 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
 
         let token = Word::from_str(text)
             .map(Token::Word)
-            .unwrap_or(Token::Other(text));
+            .unwrap_or_else(|_| {
+                if text.chars().all(|c| ALPHABET.contains(c.to_ascii_lowercase())) {
+                    Token::Lasina(text)
+                } else {
+                    Token::Other(text)
+                }
+            });
 
         return (token, leftover);
     }

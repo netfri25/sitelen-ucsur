@@ -26,7 +26,34 @@ impl<'a> fmt::Display for Token<'a> {
             }
 
             Token::Word(word) => f.write_char(word.as_sitelen()),
-            Token::Other(s) => f.write_str(s),
+            Token::Lasina(s) => {
+                f.write_char(Modifier::StartOfCartouche.as_sitelen())?;
+
+                s.chars().try_for_each(|c| {
+                    let c = match c.to_ascii_lowercase() {
+                        'a' => '󱤆',
+                        'e' => '󱤉',
+                        'i' => '󱤏',
+                        'j' => '󱤒',
+                        'k' => '󱤕',
+                        'l' => '󱤩',
+                        'm' => '󱤱',
+                        'n' => '󱥀',
+                        'o' => '󱥇',
+                        'p' => '󱥈',
+                        's' => '󱥡',
+                        't' => '󱥩',
+                        'u' => '󱥱',
+                        'w' => '󱥵',
+                        c => c,
+                    };
+
+                    f.write_char(c)
+                })?;
+
+                f.write_char(Modifier::EndOfCartouche.as_sitelen())
+            }
+            Token::Other(other) => f.write_str(other),
             Token::Space(spaces) => f.write_str("\u{3000}".repeat(spaces.len() / 2).as_str()),
         }
     }
