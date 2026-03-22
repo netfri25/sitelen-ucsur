@@ -23,6 +23,26 @@ another way to use it is by piping to stdin:
 echo "mi kama sona e toki pona o" | sitelen-ucsur
 ```
 
+
+#### Special Characters
+| character | description |
+| :-------: | :---------- |
+| `(` | START OF LONG GLYPH (e.g. long pi) |
+| `)` | END OF LONG GLYPH |
+| `[` | START OF CARTOUCHE |
+| `]` | END OF CARTOUCHE |
+| `{` | START OF REVERSE LONG GLYPH (e.g. long la) |
+| `}` | END OF REVERSE LONG GLYPH |
+| `+` | SCALING JOINER (second words inside first word) |
+| `-` | STACKING JOINER (second word above first word) |
+| `_` | COMBINING LONG GLYPH EXTENSION |
+| `.` | middle dot |
+| `:` | colon |
+| `te` | start of toki pona quotes |
+| `to` | end of toki pona quotes |
+
+
+
 #### Example
 here's a script I use to convert the currently selected text to sitelen UCSUR:
 ```bash
