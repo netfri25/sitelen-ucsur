@@ -40,6 +40,9 @@ pub enum Token<'a> {
     // end of quotes
     To,
 
+    // alternative symbol selection
+    AltSymbol,
+
     // valid sitelen Lasina word
     Word(Word),
 
@@ -77,6 +80,7 @@ impl<'a> Token<'a> {
             Token::Colon => ":",
             Token::Te => "te",
             Token::To => "to",
+            Token::AltSymbol => "^",
             Token::Word(word) => word.as_lasina(),
             Token::Space(spaces) => spaces,
             Token::Lasina(word) => word,
@@ -110,6 +114,7 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
             '_' => Token::Underscore,
             '.' => Token::Dot,
             ':' => Token::Colon,
+            '^' => Token::AltSymbol,
             _ => break 'token None,
         })
     };
@@ -163,7 +168,7 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
 }
 
 fn valid_char_token(c: char) -> bool {
-    c.is_alphabetic() || " ()[]{}+-_.:".contains(c)
+    c.is_alphabetic() || " ()[]{}+-_.:^".contains(c)
 }
 
 pub fn tokens(mut input: &'_ str) -> impl Iterator<Item = Token<'_>> {

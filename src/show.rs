@@ -18,7 +18,8 @@ impl<'a> fmt::Display for Token<'a> {
             | Token::Dot
             | Token::Colon
             | Token::Te
-            | Token::To => {
+            | Token::To
+            | Token::AltSymbol => {
                 let modifier = TOKEN_MODIFIER
                     .iter()
                     .find(|(t, _)| t == self)
@@ -61,7 +62,7 @@ impl<'a> fmt::Display for Token<'a> {
     }
 }
 
-pub const TOKEN_MODIFIER: [(Token, char); 13] = [
+pub const TOKEN_MODIFIER: [(Token, char); 14] = [
     (Token::LParen, Modifier::StartOfLongGlyph.as_sitelen()),
     (Token::RParen, Modifier::EndOfLongGlyph.as_sitelen()),
     (Token::LBrack, Modifier::StartOfCartouche.as_sitelen()),
@@ -75,4 +76,5 @@ pub const TOKEN_MODIFIER: [(Token, char); 13] = [
     (Token::Colon, Modifier::Colon.as_sitelen()),
     (Token::Te, '「'),
     (Token::To, '」'),
+    (Token::AltSymbol, '\u{fe00}'),
 ];
