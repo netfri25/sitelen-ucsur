@@ -1,13 +1,21 @@
 # About
 ilo li ante e sitelen Lasina tawa sitelen UCSUR
 
-󱤎󱤧󱤆󱤉󱥠Lasina 󱥩󱥠UCSUR
+󱤎󱤧󱤆󱤉󱥠󱦐󱤡󱦝󱥞󱦝󱦑󱥩󱥠󱦐󱥯󱥛󱦜󱥖󱦜󱦑
 
 tool that converts sitelen Lasina into sitelen UCSUR
+
+## Features
+ - conversion of sitelen UCSUR from/to sitelen Lasina
+ - supports many additional special characters
+ - can recognize names and construct the shortest possible cartouche using [nasin sitelen kalama](https://sona.pona.la/wiki/nasin_sitelen_kalama) (dots and colons)
+ - blazingly🔥 fast🚀
+
 
 ## Getting started
 ### Prerequisite
  - [cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html)
+
 
 ### Installation
 ```shell
@@ -15,13 +23,21 @@ cargo install --git https://github.com/netfri25/sitelen-ucsur
 ```
 this should install the binary `sitelen-ucsur` to your cargo bin path, which by default is `$HOME/.cargo/bin`
 
+
 ## Usage
 you can run this program simply by typing `sitelen-ucsur` in your terminal, and then use it kind of like a REPL.
 
 another way to use it is by piping to stdin:
 ```shell
-echo "mi kama sona e toki pona o" | sitelen-ucsur
+echo "mama o lukin  mi ken sitelen Usisa a" | sitelen-ucsur from
+echo "󱤱󱥄󱤮　󱤴󱤘󱥠󱦐󱥯󱥛󱦜󱥖󱦜󱦑󱤀" | sitelen-ucsur to
 ```
+
+
+#### Argument Name
+it might seem weird at first, but the arguments `from`/`to` are intended to be a non complete sentence:
+ - `sitelen-ucsur from` convert from the inserted text to sitelen ucsur
+ - `sitelen-ucsur to` convert sitelen-ucsur to normal text
 
 
 #### Special Characters
@@ -42,9 +58,11 @@ echo "mi kama sona e toki pona o" | sitelen-ucsur
 | `to` | end of toki pona quotes |
 
 
-
 #### Example
-here's a script I use to convert the currently selected text to sitelen UCSUR:
+here's a script I use to convert the currently selected text to sitelen UCSUR: \
+it does that by using the "primary clipboard", which is a clipboard that contains the currently selected text. \
+this script uses `wl-copy`, `wl-paste` (both are from the `wl-clipboard` package), and `wtype` (for pressing ctrl-v).
+
 ```bash
 #!/usr/bin/env bash
 
