@@ -85,7 +85,7 @@ pub const TOKEN_MODIFIER: [(Token, char); 14] = [
     (Token::Underscore, Modifier::CombiningLongGlyphExtension.as_sitelen()),
     (Token::Dot, Modifier::MiddleDot.as_sitelen()),
     (Token::Colon, Modifier::Colon.as_sitelen()),
-    (Token::Te, '「'),
-    (Token::To, '」'),
+    (Token::Te, '󱦞'),
+    (Token::To, '󱦟'),
     (Token::AltSymbol, '\u{fe00}'),
 ];
