@@ -49,13 +49,21 @@ it might seem weird at first, but the arguments `from`/`to` are intended to be a
 | `]` | END OF CARTOUCHE |
 | `{` | START OF REVERSE LONG GLYPH (e.g. long la) |
 | `}` | END OF REVERSE LONG GLYPH |
-| `+` | SCALING JOINER (second words inside first word) |
+| `+` | SCALING JOINER (second word inside first word) |
 | `-` | STACKING JOINER (second word above first word) |
 | `_` | COMBINING LONG GLYPH EXTENSION |
 | `.` | middle dot |
 | `:` | colon |
-| `te` | start of toki pona quotes |
-| `to` | end of toki pona quotes |
+| `^` | alternative symbol |
+| `^1` | 1st alternative symbol (same as `^`) |
+| `^2` | 2nd alternative symbol |
+| `^3` | 3rd alternative symbol |
+| `^4` | 4th alternative symbol |
+| `^5` | 5th alternative symbol |
+| `^6` | 6th alternative symbol |
+| `^7` | 7th alternative symbol |
+| `^8` | 8th alternative symbol |
+| `^9` | 9th alternative symbol |
 
 
 #### Example
