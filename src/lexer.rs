@@ -104,7 +104,7 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
 }
 
 fn valid_char_token(c: char) -> bool {
-    c.is_alphabetic() || " ()[]{}+-_.:^".contains(c)
+    c.is_alphabetic() || " ()[]{}+-_.:".contains(c)
 }
 
 pub fn tokens(mut input: &'_ str) -> impl Iterator<Item = Token<'_>> {
