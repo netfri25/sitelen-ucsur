@@ -1,7 +1,7 @@
 use std::fmt::{self, Write as _};
 
-use crate::token::Token;
 use crate::modifier::Modifier;
+use crate::token::Token;
 use crate::word::find_minimal_word_construction;
 
 impl<'a> fmt::Display for Token<'a> {

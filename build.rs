@@ -98,7 +98,10 @@ fn generate(out: &mut impl Write) -> io::Result<()> {
         }
     }
 
-    writeln!(out, "static SECTION_TO_WORD: phf::Map<&str, Word> = phf::phf_map! {{")?;
+    writeln!(
+        out,
+        "static SECTION_TO_WORD: phf::Map<&str, Word> = phf::phf_map! {{"
+    )?;
     for (key, value) in section_to_words {
         writeln!(out, "    \"{}\" => Word::{},", key, capitalize(value))?;
     }

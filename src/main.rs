@@ -25,13 +25,13 @@ fn main() {
 fn main_loop<F, O>(out: &mut O, mut conv: F) -> io::Result<()>
 where
     F: FnMut(&mut O, &str) -> io::Result<()>,
-    O: io::Write
+    O: io::Write,
 {
     let stdin = io::stdin();
     let mut line = String::new();
     while stdin.read_line(&mut line).is_ok() {
         if line.is_empty() {
-            break
+            break;
         }
 
         conv(out, &line)?;
@@ -51,7 +51,7 @@ fn to_sitelen(out: &mut impl io::Write, input: &str) -> io::Result<()> {
             Token::Other(..) => prev_is_word = false,
             Token::Space(spaces) if !prev_is_word => {
                 write!(out, "{}", spaces)?;
-                continue
+                continue;
             }
             _ => {}
         }
@@ -61,7 +61,6 @@ fn to_sitelen(out: &mut impl io::Write, input: &str) -> io::Result<()> {
 
     Ok(())
 }
-
 
 fn from_sitelen(out: &mut impl io::Write, input: &str) -> io::Result<()> {
     for c in input.chars() {
@@ -89,7 +88,7 @@ fn parse_args() -> bool {
     match opt.as_str() {
         "from" => return true,
         "to" => return false,
-        _ => {},
+        _ => {}
     }
 
     print_usage(&program);

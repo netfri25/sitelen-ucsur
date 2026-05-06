@@ -1,7 +1,7 @@
 include!(concat!(env!("OUT_DIR"), "/word.rs"));
 
-use crate::token::Token;
 use crate::modifier::Modifier;
+use crate::token::Token;
 
 enum Section {
     FullWord(Word),
@@ -27,9 +27,8 @@ impl Section {
 pub fn find_minimal_word_construction(word: &str) -> Option<impl Iterator<Item = Token<'static>>> {
     find_minimal_word_construction_sections(word).map(|sections| {
         sections.into_iter().flat_map(|section| match section {
-            Section::FullWord(word) => {
-                std::iter::once(Token::Word(*word)).chain(std::iter::repeat_n(Token::Modifier(Modifier::Colon), 1))
-            }
+            Section::FullWord(word) => std::iter::once(Token::Word(*word))
+                .chain(std::iter::repeat_n(Token::Modifier(Modifier::Colon), 1)),
             Section::Dots(text, dots) => {
                 let word = SECTION_TO_WORD[text];
 

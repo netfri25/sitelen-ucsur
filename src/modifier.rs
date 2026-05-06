@@ -9,8 +9,8 @@ pub enum Modifier {
     EndOfCartouche = 0x1,
 
     CombiningCartoucheExtension = 0x2, // deprecated
-    StartOfLongPi = 0x3, // deprecated
-    CombiningLongPiExtension = 0x4, // deprecated
+    StartOfLongPi = 0x3,               // deprecated
+    CombiningLongPiExtension = 0x4,    // deprecated
 
     StackingJoiner = 0x5,
     ScalingJoiner = 0x6,
