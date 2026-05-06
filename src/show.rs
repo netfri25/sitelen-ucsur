@@ -14,6 +14,7 @@ impl<'a> fmt::Display for Token<'a> {
                 construct_name(s, f)?;
                 f.write_char(Modifier::EndOfCartouche.as_sitelen())
             }
+            Token::Alt(alt) => f.write_char(alt.as_char()),
             Token::Other(other) => f.write_str(other),
             Token::Space(spaces) => f.write_str("\u{3000}".repeat(spaces.len() / 2).as_str()),
         }

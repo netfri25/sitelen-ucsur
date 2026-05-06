@@ -1,5 +1,6 @@
 use std::str::FromStr as _;
 
+use crate::alt::Alt;
 use crate::modifier::Modifier;
 use crate::word::Word;
 
@@ -13,6 +14,9 @@ pub enum Token<'a> {
     // valid sitelen Lasina word
     Word(Word),
 
+    // selection of an alternative character
+    Alt(Alt),
+
     // non sitelen Lasina word but uses all alphabetical letters
     Lasina(&'a str),
 
@@ -25,6 +29,10 @@ pub enum Token<'a> {
 
 impl<'a> Token<'a> {
     pub fn from_sitelen(c: char) -> Option<Self> {
+        if let Some(res) = Alt::from_sitelen(c) {
+            return Some(Token::Alt(res));
+        }
+
         if let Some(res) = Modifier::from_sitelen(c) {
             return Some(Token::Modifier(res));
         }
@@ -40,6 +48,7 @@ impl<'a> Token<'a> {
         match self {
             Token::Modifier(modifier) => modifier.as_lasina(),
             Token::Word(word) => word.as_lasina(),
+            Token::Alt(alt) => alt.as_lasina(),
             Token::Space(spaces) => spaces,
             Token::Lasina(word) => word,
             Token::Other(other) => other,
@@ -55,12 +64,30 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
         return (Token::Space(""), "");
     }
 
-    // parse single character modifier
     let mut iter = input.chars();
     let first = iter.next().unwrap_or_default();
     let leftover = iter.as_str();
-    let modifier = Modifier::from_char(first);
 
+    // parse alternative character
+    if first == '^' {
+        let mut leftover = leftover;
+
+        let second = iter.next().unwrap_or_default();
+
+        let alt = if second.is_ascii_digit() {
+            leftover = &leftover[1..];
+            let value = second as u8 - b'0';
+            Alt::from_value(value).unwrap_or_default()
+        } else {
+            Alt::default()
+        };
+
+        let token = Token::Alt(alt);
+        return (token, leftover);
+    }
+
+    // parse single character modifier
+    let modifier = Modifier::from_char(first);
     if let Some(modifier) = modifier {
         let token = Token::Modifier(modifier);
         return (token, leftover);
@@ -104,7 +131,7 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
 }
 
 fn valid_char_token(c: char) -> bool {
-    c.is_alphabetic() || " ()[]{}+-_.:".contains(c)
+    c.is_alphabetic() || " ()[]{}+-_.:^".contains(c)
 }
 
 pub fn tokens(mut input: &'_ str) -> impl Iterator<Item = Token<'_>> {

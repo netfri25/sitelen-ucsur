@@ -3,10 +3,11 @@ use std::io;
 
 use crate::token::Token;
 
+mod alt;
+mod modifier;
 mod show;
 mod token;
 mod word;
-mod modifier;
 
 fn main() {
     let lasina_to_sitelen = parse_args();
