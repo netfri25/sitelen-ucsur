@@ -1,47 +1,14 @@
 use std::str::FromStr as _;
 
-use crate::show;
+use crate::modifier::Modifier;
 use crate::word::Word;
 
 const ALPHABET: &str = "aeijklmnopstuw";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Token<'a> {
-    // ()
-    LParen,
-    RParen,
-
-    // []
-    LBrack,
-    RBrack,
-
-    // {}
-    LBrace,
-    RBrace,
-
-    // +
-    Plus,
-
-    // -
-    Minus,
-
-    // _
-    Underscore,
-
-    // .
-    Dot,
-
-    // :
-    Colon,
-
-    // start of quotes
-    Te,
-
-    // end of quotes
-    To,
-
-    // alternative symbol selection
-    AltSymbol,
+    // special characters (modifiers)
+    Modifier(Modifier),
 
     // valid sitelen Lasina word
     Word(Word),
@@ -58,29 +25,20 @@ pub enum Token<'a> {
 
 impl<'a> Token<'a> {
     pub fn from_sitelen(c: char) -> Option<Self> {
-        show::TOKEN_MODIFIER
-            .iter()
-            .find(|(_, m)| *m == c)
-            .map(|(t, _)| *t)
-            .or_else(|| Word::from_sitelen(c).map(Self::Word))
+        if let Some(res) = Modifier::from_sitelen(c) {
+            return Some(Token::Modifier(res));
+        }
+
+        if let Some(res) = Word::from_sitelen(c) {
+            return Some(Token::Word(res));
+        }
+
+        None
     }
 
     pub fn as_literal(&self) -> &'a str {
         match self {
-            Token::LParen => "(",
-            Token::RParen => ")",
-            Token::LBrack => "[",
-            Token::RBrack => "]",
-            Token::LBrace => "{",
-            Token::RBrace => "}",
-            Token::Plus => "+",
-            Token::Minus => "-",
-            Token::Underscore => "_",
-            Token::Dot => ".",
-            Token::Colon => ":",
-            Token::Te => "te",
-            Token::To => "to",
-            Token::AltSymbol => "^",
+            Token::Modifier(modifier) => modifier.as_lasina(),
             Token::Word(word) => word.as_lasina(),
             Token::Space(spaces) => spaces,
             Token::Lasina(word) => word,
@@ -101,25 +59,10 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
     let mut iter = input.chars();
     let first = iter.next().unwrap_or_default();
     let leftover = iter.as_str();
-    let token = 'token: {
-        Some(match first {
-            '(' => Token::LParen,
-            ')' => Token::RParen,
-            '[' => Token::LBrack,
-            ']' => Token::RBrack,
-            '{' => Token::LBrace,
-            '}' => Token::RBrace,
-            '+' => Token::Plus,
-            '-' => Token::Minus,
-            '_' => Token::Underscore,
-            '.' => Token::Dot,
-            ':' => Token::Colon,
-            '^' => Token::AltSymbol,
-            _ => break 'token None,
-        })
-    };
+    let modifier = Modifier::from_char(first);
 
-    if let Some(token) = token {
+    if let Some(modifier) = modifier {
+        let token = Token::Modifier(modifier);
         return (token, leftover);
     }
 
@@ -137,23 +80,16 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
     if count > 0 {
         let text = &input[..count];
 
-        if text == "te" {
-            return (Token::Te, leftover)
-        }
-
-        if text == "to" {
-            return (Token::To, leftover)
-        }
-
-        let token = Word::from_str(text)
-            .map(Token::Word)
-            .unwrap_or_else(|_| {
-                if text.chars().all(|c| ALPHABET.contains(c.to_ascii_lowercase())) {
-                    Token::Lasina(text)
-                } else {
-                    Token::Other(text)
-                }
-            });
+        let token = Word::from_str(text).map(Token::Word).unwrap_or_else(|_| {
+            if text
+                .chars()
+                .all(|c| ALPHABET.contains(c.to_ascii_lowercase()))
+            {
+                Token::Lasina(text)
+            } else {
+                Token::Other(text)
+            }
+        });
 
         return (token, leftover);
     }

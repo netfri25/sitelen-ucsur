@@ -1,6 +1,7 @@
 include!(concat!(env!("OUT_DIR"), "/word.rs"));
 
 use crate::lexer::Token;
+use crate::modifier::Modifier;
 
 enum Section {
     FullWord(Word),
@@ -27,13 +28,13 @@ pub fn find_minimal_word_construction(word: &str) -> Option<impl Iterator<Item =
     find_minimal_word_construction_sections(word).map(|sections| {
         sections.into_iter().flat_map(|section| match section {
             Section::FullWord(word) => {
-                std::iter::once(Token::Word(*word)).chain(std::iter::repeat_n(Token::Colon, 1))
+                std::iter::once(Token::Word(*word)).chain(std::iter::repeat_n(Token::Modifier(Modifier::Colon), 1))
             }
             Section::Dots(text, dots) => {
                 let word = SECTION_TO_WORD[text];
 
                 std::iter::once(Token::Word(word)).chain(std::iter::repeat_n(
-                    Token::Dot,
+                    Token::Modifier(Modifier::MiddleDot),
                     usize::try_from(*dots).unwrap(),
                 ))
             }

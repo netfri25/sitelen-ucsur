@@ -7,28 +7,7 @@ use crate::word::find_minimal_word_construction;
 impl<'a> fmt::Display for Token<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Token::LParen
-            | Token::RParen
-            | Token::LBrack
-            | Token::RBrack
-            | Token::LBrace
-            | Token::RBrace
-            | Token::Plus
-            | Token::Minus
-            | Token::Underscore
-            | Token::Dot
-            | Token::Colon
-            | Token::Te
-            | Token::To
-            | Token::AltSymbol => {
-                let modifier = TOKEN_MODIFIER
-                    .iter()
-                    .find(|(t, _)| t == self)
-                    .expect("modifier for token exists")
-                    .1;
-                f.write_char(modifier)
-            }
-
+            Token::Modifier(modifier) => f.write_char(modifier.as_sitelen()),
             Token::Word(word) => f.write_char(word.as_sitelen()),
             Token::Lasina(s) => {
                 f.write_char(Modifier::StartOfCartouche.as_sitelen())?;
@@ -72,20 +51,3 @@ fn construct_name_simple(s: &str, f: &mut fmt::Formatter) -> fmt::Result {
         f.write_char(c)
     })
 }
-
-pub const TOKEN_MODIFIER: [(Token, char); 14] = [
-    (Token::LParen, Modifier::StartOfLongGlyph.as_sitelen()),
-    (Token::RParen, Modifier::EndOfLongGlyph.as_sitelen()),
-    (Token::LBrack, Modifier::StartOfCartouche.as_sitelen()),
-    (Token::RBrack, Modifier::EndOfCartouche.as_sitelen()),
-    (Token::LBrace, Modifier::StartOfReverseLongGlyph.as_sitelen()),
-    (Token::RBrace, Modifier::EndOfReverseLongGlyph.as_sitelen()),
-    (Token::Plus, Modifier::ScalingJoiner.as_sitelen()),
-    (Token::Minus, Modifier::StackingJoiner.as_sitelen()),
-    (Token::Underscore, Modifier::CombiningLongGlyphExtension.as_sitelen()),
-    (Token::Dot, Modifier::MiddleDot.as_sitelen()),
-    (Token::Colon, Modifier::Colon.as_sitelen()),
-    (Token::Te, '󱦞'),
-    (Token::To, '󱦟'),
-    (Token::AltSymbol, '\u{fe00}'),
-];
