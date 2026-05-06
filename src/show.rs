@@ -1,6 +1,6 @@
 use std::fmt::{self, Write as _};
 
-use crate::lexer::Token;
+use crate::token::Token;
 use crate::modifier::Modifier;
 use crate::word::find_minimal_word_construction;
 

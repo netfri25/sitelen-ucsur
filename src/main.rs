@@ -1,10 +1,10 @@
 use std::env;
 use std::io;
 
-use crate::lexer::Token;
+use crate::token::Token;
 
 mod show;
-mod lexer;
+mod token;
 mod word;
 mod modifier;
 
@@ -44,7 +44,7 @@ where
 
 fn to_sitelen(out: &mut impl io::Write, input: &str) -> io::Result<()> {
     let mut prev_is_word = false;
-    for token in lexer::tokens(input) {
+    for token in token::tokens(input) {
         match token {
             Token::Word(..) => prev_is_word = true,
             Token::Other(..) => prev_is_word = false,

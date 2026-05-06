@@ -1,6 +1,6 @@
 include!(concat!(env!("OUT_DIR"), "/word.rs"));
 
-use crate::lexer::Token;
+use crate::token::Token;
 use crate::modifier::Modifier;
 
 enum Section {
