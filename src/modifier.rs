@@ -3,7 +3,7 @@
 pub enum Modifier {
     StartOfCartouche = 0x0,
     EndOfCartouche = 0x1,
-    // these aren't used
+    // these aren't used (deprecated)
     // CombiningCartoucheExtension = 0x2,
     // StartOfLongPi = 0x3,
     // CombiningLongPiExtension = 0x4,
@@ -21,23 +21,10 @@ pub enum Modifier {
 impl Modifier {
     // returns the unicode representation of the modifier
     pub const fn as_sitelen(self) -> char {
-        UNICODE_TABLE[self as usize]
+        unsafe {
+            // SAFETY: since the values of the Modifier enum are carefully picked, we know for a
+            // fact that it will be a valid unicode value, so it can be `unchecked`
+            char::from_u32_unchecked(0xf1990 + self as u32)
+        }
     }
 }
-
-pub const UNICODE_TABLE: [char; 14] = [
-    '\u{f1990}',
-    '\u{f1991}',
-    '\u{f1992}',
-    '\u{f1993}',
-    '\u{f1994}',
-    '\u{f1995}',
-    '\u{f1996}',
-    '\u{f1997}',
-    '\u{f1998}',
-    '\u{f1999}',
-    '\u{f199a}',
-    '\u{f199b}',
-    '\u{f199c}',
-    '\u{f199d}',
-];
