@@ -27,7 +27,7 @@ fn construct_number_nnp(mut n: i32, f: &mut fmt::Formatter) -> fmt::Result {
 
     // nanpa li suli la o kipisi e ona kepeken nimi "ale"
     if n >= 100 {
-        construct_number_nnp(n / 100, f)?;
+        if n > 100 { construct_number_nnp(n / 100, f)?; }
         f.write_str("󱤄")?;
         n %= 100;
     }
