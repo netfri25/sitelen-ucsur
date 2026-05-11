@@ -9,6 +9,7 @@ tool that converts sitelen Lasina into sitelen UCSUR
  - conversion of sitelen UCSUR from/to sitelen Lasina
  - supports many additional special characters
  - can recognize names and construct the shortest possible cartouche using [nasin sitelen kalama](https://sona.pona.la/wiki/nasin_sitelen_kalama) (dots and colons)
+ - converts whole numbers to sitelen pona using [nasin nanpa pona](https://sona.pona.la/wiki/nasin_nanpa_pona)
  - blazingly🔥 fast🚀
 
 
