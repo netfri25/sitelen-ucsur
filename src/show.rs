@@ -25,7 +25,7 @@ impl<'a> fmt::Display for Token<'a> {
 fn construct_number_nnp(mut n: i32, f: &mut fmt::Formatter) -> fmt::Result {
     if n == 0 { return f.write_str("󱤂"); }
 
-    // if large, break down with ale
+    // nanpa li suli la o kipisi e ona kepeken nimi "ale"
     if n >= 100 {
         construct_number_nnp(n / 100, f)?;
         f.write_str("󱤄")?;
