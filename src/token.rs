@@ -24,7 +24,7 @@ pub enum Token<'a> {
     Space(&'a str),
 
     // number (will be converted to nnp)
-    Number(i32),
+    Number(&'a str),
 
     // everything else
     Other(&'a str),
@@ -54,7 +54,7 @@ impl<'a> Token<'a> {
             Token::Alt(alt) => alt.as_lasina(),
             Token::Space(spaces) => spaces,
             Token::Lasina(word) => word,
-            Token::Number(_n) => unreachable!(),
+            Token::Number(number) => number,
             Token::Other(other) => other,
         }
     }
@@ -110,7 +110,7 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
     let count = input.len() - leftover.len();
     if count > 0 {
         let text = &input[..count];
-        return (Token::Number(text.parse::<i32>().unwrap()), leftover);
+        return (Token::Number(text), leftover);
     }
 
     // parse word

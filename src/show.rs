@@ -14,7 +14,11 @@ impl<'a> fmt::Display for Token<'a> {
                 construct_name(s, f)?;
                 f.write_char(Modifier::EndOfCartouche.as_sitelen())
             }
-            Token::Number(n) => construct_number_nnp(*n, f),
+            Token::Number(n) => {
+                // TODO: maybe support very big numbers?
+                let number = n.parse().expect("number is known to be digit-only");
+                construct_number_nnp(number, f)
+            }
             Token::Alt(alt) => f.write_char(alt.as_char()),
             Token::Other(other) => f.write_str(other),
             Token::Space(spaces) => f.write_str("\u{3000}".repeat(spaces.len() / 2).as_str()),
