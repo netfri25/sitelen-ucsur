@@ -54,7 +54,7 @@ impl<'a> Token<'a> {
             Token::Alt(alt) => alt.as_lasina(),
             Token::Space(spaces) => spaces,
             Token::Lasina(word) => word,
-            Token::Number(_n) => "", // ni li ken ala
+            Token::Number(_n) => unreachable!(),
             Token::Other(other) => other,
         }
     }
