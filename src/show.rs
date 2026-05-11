@@ -41,11 +41,13 @@ fn construct_number_nnp(mut n: i32, f: &mut fmt::Formatter) -> fmt::Result {
 }
 
 fn construct_name(s: &str, f: &mut fmt::Formatter) -> fmt::Result {
-    let Some(mut tokens) = find_minimal_word_construction(s) else {
+    let Some(tokens) = find_minimal_word_construction(s) else {
         return construct_name_simple(s, f);
     };
 
-    tokens.try_for_each(|token| fmt::Display::fmt(&token, f))
+    tokens
+        .into_iter()
+        .try_for_each(|token| fmt::Display::fmt(&token, f))
 }
 
 fn construct_name_simple(s: &str, f: &mut fmt::Formatter) -> fmt::Result {

@@ -1,7 +1,8 @@
 include!(concat!(env!("OUT_DIR"), "/word.rs"));
 
+use std::fmt;
+
 use crate::modifier::Modifier;
-use crate::token::{Token, TokenKind};
 
 enum Section {
     FullWord(Word),
@@ -24,27 +25,30 @@ impl Section {
     }
 }
 
-// TODO: optimize by returning a smaller structure that can be `fmt::Display`ed
-pub fn find_minimal_word_construction(word: &str) -> Option<impl Iterator<Item = Token<'static>>> {
-    find_minimal_word_construction_sections(word).map(|sections| {
-        sections.into_iter().flat_map(|section| match section {
+impl fmt::Display for Section {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
             Section::FullWord(word) => {
-                let word_token = Token::new(word.as_lasina(), TokenKind::Word(*word));
-                let modifier_token = Token::new(":", TokenKind::Modifier(Modifier::Colon));
-
-                // using `repeat_n` of 1 so that the return types will match
-                std::iter::once(word_token).chain(std::iter::repeat_n(modifier_token, 1))
+                write!(f, "{}{}", word.as_sitelen(), Modifier::Colon.as_sitelen())
             }
 
             Section::Dots(text, dots) => {
                 let word = SECTION_TO_WORD[text];
-                let word_token = Token::new(word.as_lasina(), TokenKind::Word(word));
-                let modifier_token = Token::new(".", TokenKind::Modifier(Modifier::MiddleDot));
-                let count = usize::try_from(*dots).unwrap();
-                std::iter::once(word_token).chain(std::iter::repeat_n(modifier_token, count))
+                write!(f, "{}", word.as_sitelen())?;
+
+                for _ in 0..*dots {
+                    write!(f, "{}", Modifier::MiddleDot.as_sitelen())?;
+                }
+
+                Ok(())
             }
-        })
-    })
+        }
+    }
+}
+
+// wrapper function to hide the inner type
+pub fn find_minimal_word_construction(word: &str) -> Option<Vec<impl fmt::Display>> {
+    find_minimal_word_construction_sections(word)
 }
 
 fn find_minimal_word_construction_sections(word: &str) -> Option<Vec<&'static Section>> {
