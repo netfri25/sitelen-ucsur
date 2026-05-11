@@ -24,7 +24,7 @@ pub enum TokenKind {
     Space,
 
     // number (will be converted to nnp)
-    Number(i32),
+    Number,
 
     // everything else
     Other,
@@ -130,10 +130,7 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
     let count = input.len() - leftover.len();
     if count > 0 {
         let text = &input[..count];
-
-        // TODO: maybe support very big numbers?
-        let number = text.parse().expect("verified to be digits only");
-        return (Token::new(text, TokenKind::Number(number)), leftover);
+        return (Token::new(text, TokenKind::Number), leftover);
     }
 
     // parse word
