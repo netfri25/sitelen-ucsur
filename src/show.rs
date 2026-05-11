@@ -41,7 +41,7 @@ fn construct_number_nnp(mut n: i32, f: &mut fmt::Formatter) -> fmt::Result {
     while n >= 2 { f.write_str("󱥮")?; n -= 2; }
     while n >= 1 { f.write_str("󱥳")?; n -= 1; }
 
-    return Ok(());
+    Ok(())
 }
 
 fn construct_name(s: &str, f: &mut fmt::Formatter) -> fmt::Result {
