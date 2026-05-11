@@ -2,6 +2,7 @@ use std::env;
 use std::io;
 
 use crate::token::Token;
+use crate::token::TokenKind;
 
 mod alt;
 mod modifier;
@@ -46,11 +47,11 @@ where
 fn to_sitelen(out: &mut impl io::Write, input: &str) -> io::Result<()> {
     let mut prev_is_word = false;
     for token in token::tokens(input) {
-        match token {
-            Token::Word(..) => prev_is_word = true,
-            Token::Other(..) => prev_is_word = false,
-            Token::Space(spaces) if !prev_is_word => {
-                write!(out, "{}", spaces)?;
+        match token.kind() {
+            TokenKind::Word(..) => prev_is_word = true,
+            TokenKind::Other => prev_is_word = false,
+            TokenKind::Space if !prev_is_word => {
+                write!(out, "{}", token.text())?;
                 continue;
             }
             _ => {}
@@ -64,8 +65,10 @@ fn to_sitelen(out: &mut impl io::Write, input: &str) -> io::Result<()> {
 
 fn from_sitelen(out: &mut impl io::Write, input: &str) -> io::Result<()> {
     for c in input.chars() {
-        if let Some(token) = Token::from_sitelen(c) {
-            write!(out, "{} ", token.as_literal())?;
+        if let Some(kind) = TokenKind::from_sitelen(c) {
+            // creating a Token since only Token has the required `as_lasina` method
+            let token = Token::new("", kind).as_lasina();
+            write!(out, "{} ", token)?;
         } else {
             write!(out, "{}", c)?;
         }

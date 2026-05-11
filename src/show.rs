@@ -1,27 +1,23 @@
 use std::fmt::{self, Write as _};
 
 use crate::modifier::Modifier;
-use crate::token::Token;
+use crate::token::{Token, TokenKind};
 use crate::word::find_minimal_word_construction;
 
 impl<'a> fmt::Display for Token<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Token::Modifier(modifier) => f.write_char(modifier.as_sitelen()),
-            Token::Word(word) => f.write_char(word.as_sitelen()),
-            Token::Lasina(s) => {
+        match self.kind() {
+            TokenKind::Modifier(modifier) => f.write_char(modifier.as_sitelen()),
+            TokenKind::Word(word) => f.write_char(word.as_sitelen()),
+            TokenKind::Lasina => {
                 f.write_char(Modifier::StartOfCartouche.as_sitelen())?;
-                construct_name(s, f)?;
+                construct_name(self.text(), f)?;
                 f.write_char(Modifier::EndOfCartouche.as_sitelen())
             }
-            Token::Number(n) => {
-                // TODO: maybe support very big numbers?
-                let number = n.parse().expect("number is known to be digit-only");
-                construct_number_nnp(number, f)
-            }
-            Token::Alt(alt) => f.write_char(alt.as_char()),
-            Token::Other(other) => f.write_str(other),
-            Token::Space(spaces) => f.write_str("\u{3000}".repeat(spaces.len() / 2).as_str()),
+            TokenKind::Number(n) => construct_number_nnp(n, f),
+            TokenKind::Alt(alt) => f.write_char(alt.as_char()),
+            TokenKind::Other => f.write_str(self.text()),
+            TokenKind::Space => f.write_str("\u{3000}".repeat(self.text().len() / 2).as_str()),
         }
     }
 }

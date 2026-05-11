@@ -1,7 +1,7 @@
 include!(concat!(env!("OUT_DIR"), "/word.rs"));
 
 use crate::modifier::Modifier;
-use crate::token::Token;
+use crate::token::{Token, TokenKind};
 
 enum Section {
     FullWord(Word),
@@ -24,18 +24,24 @@ impl Section {
     }
 }
 
+// TODO: optimize by returning a smaller structure that can be `fmt::Display`ed
 pub fn find_minimal_word_construction(word: &str) -> Option<impl Iterator<Item = Token<'static>>> {
     find_minimal_word_construction_sections(word).map(|sections| {
         sections.into_iter().flat_map(|section| match section {
-            Section::FullWord(word) => std::iter::once(Token::Word(*word))
-                .chain(std::iter::repeat_n(Token::Modifier(Modifier::Colon), 1)),
+            Section::FullWord(word) => {
+                let word_token = Token::new(word.as_lasina(), TokenKind::Word(*word));
+                let modifier_token = Token::new(":", TokenKind::Modifier(Modifier::Colon));
+
+                // using `repeat_n` of 1 so that the return types will match
+                std::iter::once(word_token).chain(std::iter::repeat_n(modifier_token, 1))
+            }
+
             Section::Dots(text, dots) => {
                 let word = SECTION_TO_WORD[text];
-
-                std::iter::once(Token::Word(word)).chain(std::iter::repeat_n(
-                    Token::Modifier(Modifier::MiddleDot),
-                    usize::try_from(*dots).unwrap(),
-                ))
+                let word_token = Token::new(word.as_lasina(), TokenKind::Word(word));
+                let modifier_token = Token::new(".", TokenKind::Modifier(Modifier::MiddleDot));
+                let count = usize::try_from(*dots).unwrap();
+                std::iter::once(word_token).chain(std::iter::repeat_n(modifier_token, count))
             }
         })
     })
