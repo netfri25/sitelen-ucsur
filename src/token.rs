@@ -23,6 +23,9 @@ pub enum Token<'a> {
     // consecutive spaces
     Space(&'a str),
 
+    // number (will be converted to nnp)
+    Number(&'a str),
+
     // everything else
     Other(&'a str),
 }
@@ -51,6 +54,7 @@ impl<'a> Token<'a> {
             Token::Alt(alt) => alt.as_lasina(),
             Token::Space(spaces) => spaces,
             Token::Lasina(word) => word,
+            Token::Number(number) => number,
             Token::Other(other) => other,
         }
     }
@@ -99,6 +103,14 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
     if count > 0 {
         let token = Token::Space(&input[..count]);
         return (token, leftover);
+    }
+
+    // parse number
+    let leftover = input.trim_start_matches(|c: char| c.is_ascii_digit());
+    let count = input.len() - leftover.len();
+    if count > 0 {
+        let text = &input[..count];
+        return (Token::Number(text), leftover);
     }
 
     // parse word
