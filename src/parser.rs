@@ -23,13 +23,13 @@ impl<'a> Parser<'a> {
     pub fn next_token(&mut self) -> Option<Token<'a>> {
         // handle empty input
         if self.input.is_empty() {
-            return None
+            return None;
         }
 
         if let Some(token) = self.parse_quote() {
             self.in_quotes = !self.in_quotes;
             self.consume(token.text().len());
-            return Some(token)
+            return Some(token);
         }
 
         let methods = [
@@ -48,6 +48,17 @@ impl<'a> Parser<'a> {
 
     fn consume(&mut self, count: usize) {
         self.input = &self.input[count..];
+    }
+
+    fn take_while(&self, mut pattern: impl FnMut(char) -> bool) -> Option<&'a str> {
+        // find first non-matching
+        let count = self
+            .input
+            .chars()
+            .position(|c| !pattern(c))
+            .unwrap_or(self.input.len());
+
+        (count > 0).then_some(&self.input[..count])
     }
 
     fn peek_char(&self) -> char {
@@ -100,39 +111,21 @@ impl<'a> Parser<'a> {
     }
 
     fn parse_space(&self) -> Option<Token<'a>> {
-        let leftover = self.input.trim_start_matches(' ');
-        let count = self.input.len() - leftover.len();
-        if count == 0 {
-            return None;
-        }
-
-        let text = &self.input[..count];
+        let text = self.take_while(|c| c == ' ')?;
         let kind = TokenKind::Space;
         let token = Token::new(text, kind);
         Some(token)
     }
 
     fn parse_number(&self) -> Option<Token<'a>> {
-        let leftover = self.input.trim_start_matches(|c: char| c.is_ascii_digit());
-        let count = self.input.len() - leftover.len();
-        if count == 0 {
-            return None;
-        }
-
-        let text = &self.input[..count];
+        let text = self.take_while(|c: char| c.is_ascii_digit())?;
         let kind = TokenKind::Number;
         let token = Token::new(text, kind);
         Some(token)
     }
 
     fn parse_word(&self) -> Option<Token<'a>> {
-        let leftover = self.input.trim_start_matches(|c: char| c.is_alphabetic());
-        let count = self.input.len() - leftover.len();
-        if count == 0 {
-            return None;
-        }
-
-        let text = &self.input[..count];
+        let text = self.take_while(|c| c.is_alphabetic())?;
 
         let kind = Word::from_str(text)
             .map(TokenKind::Word)
@@ -153,10 +146,9 @@ impl<'a> Parser<'a> {
 
     fn parse_other(&self) -> Option<Token<'a>> {
         // consume until next valid character
-        let leftover = self.input.trim_start_matches(|c| !valid_char_token(c));
-        let count = self.input.len() - leftover.len();
-        let text = &self.input[..count];
-        let token = Token::new(text, TokenKind::Other);
+        let text = self.take_while(|c| !valid_char_token(c))?;
+        let kind = TokenKind::Other;
+        let token = Token::new(text, kind);
         Some(token)
     }
 }
