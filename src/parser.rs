@@ -32,6 +32,7 @@ impl<'a> Parser<'a> {
             return Some(token);
         }
 
+        // return first parsing success
         let methods = [
             Self::parse_single_char,
             Self::parse_alternative,
