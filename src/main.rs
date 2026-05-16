@@ -7,10 +7,10 @@ use crate::token::TokenKind;
 
 mod alt;
 mod modifier;
+mod parser;
 mod show;
 mod token;
 mod word;
-mod parser;
 
 fn main() {
     let lasina_to_sitelen = parse_args();

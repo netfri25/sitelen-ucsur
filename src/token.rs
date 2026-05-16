@@ -2,7 +2,6 @@ use crate::alt::Alt;
 use crate::modifier::Modifier;
 use crate::word::Word;
 
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TokenKind {
     // special characters (modifiers)
