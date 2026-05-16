@@ -1,11 +1,13 @@
 use std::env;
 use std::io;
 
+use crate::parser::Parser;
 use crate::token::Token;
 use crate::token::TokenKind;
 
 mod alt;
 mod modifier;
+mod parser;
 mod show;
 mod token;
 mod word;
@@ -46,7 +48,9 @@ where
 
 fn to_sitelen(out: &mut impl io::Write, input: &str) -> io::Result<()> {
     let mut prev_is_word = false;
-    for token in token::tokens(input) {
+    let parser = Parser::new(input);
+
+    for token in parser {
         match token.kind() {
             TokenKind::Word(..) => prev_is_word = true,
             TokenKind::Other => prev_is_word = false,
