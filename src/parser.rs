@@ -53,11 +53,13 @@ impl<'a> Parser<'a> {
 
     fn take_while(&self, mut pattern: impl FnMut(char) -> bool) -> Option<&'a str> {
         // find first non-matching
+        // summing the utf8 length to not be inside char boundary
         let count = self
             .input
             .chars()
-            .position(|c| !pattern(c))
-            .unwrap_or(self.input.len());
+            .take_while(|&c| pattern(c))
+            .map(|c| c.len_utf8())
+            .sum();
 
         (count > 0).then_some(&self.input[..count])
     }
