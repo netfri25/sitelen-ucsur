@@ -78,16 +78,23 @@ impl<'a> Token<'a> {
 }
 
 // token is either a "sitelen Lasina" or something else
-pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
+pub fn next_token(input: &'_ str, in_quotes: bool) -> (Token<'_>, &'_ str, bool) {
     // handle empty input
     if input.is_empty() {
         // TODO?: maybe it's better to use something like `Token::End`
-        return (Token::new("", TokenKind::Space), "");
+        return (Token::new("", TokenKind::Space), "", in_quotes);
     }
 
     let mut iter = input.chars();
     let first = iter.next().unwrap_or_default();
     let leftover = iter.as_str();
+
+    // parse " to produce te or to
+    if first == '"' {
+        let quote = if in_quotes { "to" } else { "te" };
+
+        return (Token{text: quote, kind: TokenKind::Word(Word::from_str(quote).unwrap())}, leftover, !in_quotes);
+    }
 
     // parse alternative character
     if first == '^' {
@@ -106,14 +113,14 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
         let (text, leftover) = input.split_at(length);
 
         let token = Token::new(text, TokenKind::Alt(alt));
-        return (token, leftover);
+        return (token, leftover, in_quotes);
     }
 
     // parse single character modifier
     let modifier = Modifier::from_char(first);
     if let Some(modifier) = modifier {
         let token = Token::new(&input[..1], TokenKind::Modifier(modifier));
-        return (token, leftover);
+        return (token, leftover, in_quotes);
     }
 
     // parse space
@@ -122,7 +129,7 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
     if count > 0 {
         let text = &input[..count];
         let token = Token::new(text, TokenKind::Space);
-        return (token, leftover);
+        return (token, leftover, in_quotes);
     }
 
     // parse number
@@ -130,7 +137,7 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
     let count = input.len() - leftover.len();
     if count > 0 {
         let text = &input[..count];
-        return (Token::new(text, TokenKind::Number), leftover);
+        return (Token::new(text, TokenKind::Number), leftover, in_quotes);
     }
 
     // parse word
@@ -151,7 +158,7 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
         });
 
         let token = Token::new(text, kind);
-        return (token, leftover);
+        return (token, leftover, in_quotes);
     }
 
     // consume until next valid character
@@ -160,7 +167,7 @@ pub fn next_token(input: &'_ str) -> (Token<'_>, &'_ str) {
     let text = &input[..count];
     let token = Token::new(text, TokenKind::Other);
 
-    (token, leftover)
+    (token, leftover, in_quotes)
 }
 
 fn valid_char_token(c: char) -> bool {
@@ -168,13 +175,14 @@ fn valid_char_token(c: char) -> bool {
 }
 
 pub fn tokens(mut input: &'_ str) -> impl Iterator<Item = Token<'_>> {
+    let mut in_quotes = false;
     std::iter::from_fn(move || {
         if input.is_empty() {
             return None;
         }
 
         let token;
-        (token, input) = next_token(input);
+        (token, input, in_quotes) = next_token(input, in_quotes);
         Some(token)
     })
 }
