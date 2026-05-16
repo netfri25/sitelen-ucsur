@@ -163,5 +163,5 @@ impl<'a> Iterator for Parser<'a> {
 }
 
 fn valid_char_token(c: char) -> bool {
-    ALPHABET.contains(c) || c.is_ascii_digit() || " ()[]{}+-_.:^".contains(c)
+    ALPHABET.contains(c) || c.is_ascii_digit() || " ()[]{}+-_.:^\"".contains(c)
 }
