@@ -1,10 +1,7 @@
-use std::str::FromStr as _;
-
 use crate::alt::Alt;
 use crate::modifier::Modifier;
 use crate::word::Word;
 
-const ALPHABET: &str = "aeijklmnopstuw";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TokenKind {
@@ -75,114 +72,4 @@ impl<'a> Token<'a> {
             _ => self.text(),
         }
     }
-}
-
-// token is either a "sitelen Lasina" or something else
-pub fn next_token(input: &'_ str, in_quotes: bool) -> (Token<'_>, &'_ str, bool) {
-    // handle empty input
-    if input.is_empty() {
-        // TODO?: maybe it's better to use something like `Token::End`
-        return (Token::new("", TokenKind::Space), "", in_quotes);
-    }
-
-    let mut iter = input.chars();
-    let first = iter.next().unwrap_or_default();
-    let leftover = iter.as_str();
-
-    // parse " to produce te or to
-    if first == '"' {
-        let quote = if in_quotes { "to" } else { "te" };
-
-        return (Token{text: quote, kind: TokenKind::Word(Word::from_str(quote).unwrap())}, leftover, !in_quotes);
-    }
-
-    // parse alternative character
-    if first == '^' {
-        let mut length = 1;
-
-        let second = iter.next().unwrap_or_default();
-
-        let alt = if second.is_ascii_digit() {
-            length += 1;
-            let value = second as u8 - b'0';
-            Alt::from_value(value).unwrap_or_default()
-        } else {
-            Alt::default()
-        };
-
-        let (text, leftover) = input.split_at(length);
-
-        let token = Token::new(text, TokenKind::Alt(alt));
-        return (token, leftover, in_quotes);
-    }
-
-    // parse single character modifier
-    let modifier = Modifier::from_char(first);
-    if let Some(modifier) = modifier {
-        let token = Token::new(&input[..1], TokenKind::Modifier(modifier));
-        return (token, leftover, in_quotes);
-    }
-
-    // parse space
-    let leftover = input.trim_start_matches(' ');
-    let count = input.len() - leftover.len();
-    if count > 0 {
-        let text = &input[..count];
-        let token = Token::new(text, TokenKind::Space);
-        return (token, leftover, in_quotes);
-    }
-
-    // parse number
-    let leftover = input.trim_start_matches(|c: char| c.is_ascii_digit());
-    let count = input.len() - leftover.len();
-    if count > 0 {
-        let text = &input[..count];
-        return (Token::new(text, TokenKind::Number), leftover, in_quotes);
-    }
-
-    // parse word
-    let leftover = input.trim_start_matches(|c: char| c.is_alphabetic());
-    let count = input.len() - leftover.len();
-    if count > 0 {
-        let text = &input[..count];
-
-        let kind = Word::from_str(text).map(TokenKind::Word).unwrap_or_else(|_| {
-            if text
-                .chars()
-                .all(|c| ALPHABET.contains(c.to_ascii_lowercase()))
-            {
-                TokenKind::Lasina
-            } else {
-                TokenKind::Other
-            }
-        });
-
-        let token = Token::new(text, kind);
-        return (token, leftover, in_quotes);
-    }
-
-    // consume until next valid character
-    let leftover = input.trim_start_matches(|c| !valid_char_token(c));
-    let count = input.len() - leftover.len();
-    let text = &input[..count];
-    let token = Token::new(text, TokenKind::Other);
-
-    (token, leftover, in_quotes)
-}
-
-fn valid_char_token(c: char) -> bool {
-    c.is_alphabetic() || " ()[]{}+-_.:^".contains(c)
-}
-
-pub fn tokens(mut input: &'_ str) -> impl Iterator<Item = Token<'_>> {
-    let mut in_quotes = false;
-    std::iter::from_fn(move || {
-        if input.is_empty() {
-            return None;
-        }
-
-        let token;
-        (token, input, in_quotes) = next_token(input, in_quotes);
-        Some(token)
-    })
 }
