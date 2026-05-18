@@ -57,6 +57,7 @@ it might seem weird at first, but the arguments `from`/`to` are intended to be a
 | `.` | middle dot |
 | `:` | colon |
 | `^` | alternative symbol |
+| `\` | escape (everything inside the pair of backslashes will be presereved as is) |
 | `^1` | 1st alternative symbol (same as `^`) |
 | `^2` | 2nd alternative symbol |
 | `^3` | 3rd alternative symbol |
