@@ -32,6 +32,11 @@ impl<'a> Parser<'a> {
             return Some(token);
         }
 
+        if let Some(token) = self.parse_escaped() {
+            self.consume(token.text().len() + 2);
+            return Some(token);
+        }
+
         // return first parsing success
         let methods = [
             Self::parse_single_char,
@@ -66,6 +71,26 @@ impl<'a> Parser<'a> {
 
     fn peek_char(&self) -> char {
         self.input.chars().next().unwrap_or_default()
+    }
+
+    fn parse_escaped(&self) -> Option<Token<'a>> {
+        if self.peek_char() != '\\' {
+            return None;
+        }
+
+        let mut backslash_count = 0;
+        let mut text = self.take_while(|c| {
+            if c == '\\' {
+                backslash_count += 1;
+                if backslash_count == 2 { return false; }
+            }
+            return true;
+        })?;
+        text = text.strip_prefix("\\")?;
+
+        let kind = TokenKind::Other;
+        let token = Token::new(text, kind);
+        Some(token)
     }
 
     // parse " to produce te or to
