@@ -43,6 +43,7 @@ impl<'a> Parser<'a> {
             Self::parse_alternative,
             Self::parse_space,
             Self::parse_number,
+            Self::parse_multiple_a,
             Self::parse_word,
             Self::parse_other,
         ];
@@ -102,6 +103,17 @@ impl<'a> Parser<'a> {
         let quote = if self.in_quotes { Word::To } else { Word::Te };
         let kind = TokenKind::Word(quote);
         let token = Token::new("\"", kind);
+        Some(token)
+    }
+
+    fn parse_multiple_a(&self) -> Option<Token<'a>> {
+        let nimi = self.take_while(|c| c.is_alphabetic())?;
+        for c in nimi.chars() {
+            if c != 'a' { return None; }
+        }
+
+        let kind = Word::from_str("a").map(TokenKind::Word).unwrap();
+        let token = Token::new("a", kind);
         Some(token)
     }
 
