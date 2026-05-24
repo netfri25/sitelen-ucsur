@@ -108,11 +108,11 @@ impl<'a> Parser<'a> {
 
     fn parse_multiple_a(&self) -> Option<Token<'a>> {
         let nimi = self.take_while(|c| c.is_alphabetic())?;
-        for c in nimi.chars() {
-            if c != 'a' { return None; }
+        if !nimi.chars().all(|c| c == 'a') {
+            return None
         }
 
-        let kind = Word::from_str("a").map(TokenKind::Word).unwrap();
+        let kind = TokenKind::Word(Word::A);
         let token = Token::new("a", kind);
         Some(token)
     }
