@@ -66,10 +66,10 @@ fn construct_number_nnp(text: &str, f: &mut fmt::Formatter) -> fmt::Result {
 
 // should get a number in the range [0, 100) (in rust, 0..100)
 fn construct_small_number_nnp(mut n: i32, f: &mut fmt::Formatter) -> fmt::Result {
-    while n >= 20 { f.write_str("󱤼")?; n -= 20; }
-    while n >= 5 { f.write_str("󱤭")?; n -= 5; }
-    while n >= 2 { f.write_str("󱥮")?; n -= 2; }
-    while n >= 1 { f.write_str("󱥳")?; n -= 1; }
+    while n >= 20 { f.write_char(Word::Mute.as_sitelen())?; n -= 20; }
+    while n >= 5 { f.write_char(Word::Luka.as_sitelen())?; n -= 5; }
+    while n >= 2 { f.write_char(Word::Tu.as_sitelen())?; n -= 2; }
+    while n >= 1 { f.write_char(Word::Wan.as_sitelen())?; n -= 1; }
 
     Ok(())
 }
