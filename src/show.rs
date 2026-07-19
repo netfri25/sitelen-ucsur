@@ -22,6 +22,7 @@ impl<'a> fmt::Display for Token<'a> {
     }
 }
 
+// accepts a string of digits as input, and writes the `nasin nanpa pona` in sitelen UCSUR to `f`
 fn construct_number_nnp(text: &str, f: &mut fmt::Formatter) -> fmt::Result {
     let text = text.trim_start_matches('0');
 
@@ -31,6 +32,7 @@ fn construct_number_nnp(text: &str, f: &mut fmt::Formatter) -> fmt::Result {
 
     // if even - second slice starts from index 2
     // if odd  - second slice starts from index 1
+    // this is because the number is being split at pairs of digits
     let start_offset = 2 - text.len() % 2;
 
     let (first_slice, mut rest) = text.split_at(start_offset);
